@@ -75,6 +75,22 @@ public:
         return json(msg).dump(2);
     }
 
+    static string findViscosityTemperature(vector<ViscosityInfo> &viscosity_data, int containingLiquidViscosity) {
+
+        // find the interval of viscosity and the associated temperature of the containing liquid
+        for (int index = 0; index < viscosity_data.size() - 1; index++) {
+            if (viscosity_data[index].getLowerBound() <= containingLiquidViscosity &&
+                containingLiquidViscosity < viscosity_data[index + 1].getLowerBound()) {
+
+                return viscosity_data[index].getTemperature();
+
+            }
+
+        }
+
+        // if is greater than the last value then set the temperature to max
+        return viscosity_data[viscosity_data.size() - 1].getTemperature();
+    }
 
     static json readJson(string fname) {
         ifstream i(fname);
@@ -183,23 +199,7 @@ namespace Generic {
         int containingLiquidViscosity = Utils::computeViscosity();
         bool ok = false;
         string optimalTemperature;
-
-        // find the interval of viscosity and the associated temperature of the containing liquid
-        for (int index = 0; index < viscosity_data.size() - 1 && !ok; index++) {
-            if (viscosity_data[index].getLowerBound() <= containingLiquidViscosity &&
-                containingLiquidViscosity < viscosity_data[index + 1].getLowerBound()) {
-
-                optimalTemperature = viscosity_data[index].getTemperature();
-                ok = true;
-
-            }
-
-        }
-
-        // if is greater than the last value then set the temperature to max
-        if (!ok)
-            optimalTemperature = viscosity_data[viscosity_data.size() - 1].getTemperature();
-
+        optimalTemperature = Utils::findViscosityTemperature(viscosity_data, containingLiquidViscosity);
 
         string message =
                 "The temperature has been set to " + optimalTemperature + " degrees";
@@ -363,6 +363,58 @@ int main(int argc, char *argv[]) {
     stats.init(thr);
     stats.start();
 
+
+    struct mosquitto *mosq;
+
+    int pid = fork();
+
+    if (pid == 0) {
+
+        mosquitto_lib_init();
+
+        // create a new client as publisher
+
+        mosq = mosquitto_new("publisher", true, NULL);
+
+        // connect to port 1883
+        int rc = mosquitto_connect(mosq, "localhost", 1883, 60);
+
+        if (rc != 0) {
+            mosquitto_destroy(mosq);
+            return -1;
+        }
+
+
+        string message;
+        message = " Warming your tea at 70 degrees C";
+
+        mosquitto_publish(mosq, NULL, "kettle/temp/70/C", message.size(), message.c_str(), 0, false);
+
+
+
+
+        // get scheduler settings
+
+        message = Utils::readJson(SCHEDULER_INFO_PATH).dump();
+        mosquitto_publish(mosq, NULL, "kettle/scheduler", message.size(), message.c_str(), 0, true);
+
+
+
+
+        // interact with the viscosity sensor and retrieve data about the containing liquid
+
+        auto viscosity_data = Utils::readJson(VISCOSITY_INFO_PATH).get<vector<ViscosityInfo>>();
+        int viscosity = Utils::computeViscosity();
+        json data = {
+                {"viscosity",        to_string(viscosity)},
+                {"rec. temperature", Utils::findViscosityTemperature(viscosity_data, viscosity)}
+        };
+        message = data.dump();
+
+        mosquitto_publish(mosq, NULL, "kettle/viscosity", message.size(), message.c_str(), 0, true);
+
+
+    }
 
     // Code that waits for the shutdown singal for the server
     int signal = 0;

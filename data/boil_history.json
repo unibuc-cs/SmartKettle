@@ -1,0 +1,14 @@
+[
+    {
+        "scale": "C",
+        "temperature": "80"
+    },
+    {
+        "scale": "F",
+        "temperature": "200"
+    },
+    {
+        "scale": "C",
+        "temperature": "100"
+    }
+]

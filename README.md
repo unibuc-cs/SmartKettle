@@ -2,7 +2,7 @@
 
 ### Requirements
 
-```asm
+```shell
 // boost
 sudo apt-get install libboost-dev
 
@@ -20,7 +20,7 @@ sudo apt install libpistache-dev
 ```
 
 ### Compile and run
-```asm
+```shell
 g++ smart_kettle.cpp -o main -lpistache -Lmosquitto -lcrypto -lssl -lpthread  -std=c++17
 
 ./main

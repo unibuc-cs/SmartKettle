@@ -27,18 +27,26 @@ g++ smart_kettle.cpp -o main -lpistache -Lmosquitto -lcrypto -lssl -lpthread  -s
 ./main
 ```
 
-###HHTP
+### HHTP
 
-####1. Warm liquid at the specified temperature
+#### 1. Warm liquid at the specified temperature
+
 GET /warmLiquid/temperature/scale
-####2. Find the viscosity of the containing liquid and set the recommended boiling temperature
+
+#### 2. Find the viscosity of the containing liquid and set the recommended boiling temperature
+
 GET /boilLiquidByViscosity
-####3. Make tea
+
+#### 3. Make tea
+
 POST /makeTea
-####4. Set a recurrent boiling schedule 
+
+#### 4. Set a recurrent boiling schedule 
 POST /warmLiquidByDate
-####5. Stir the liquid at the specified rpm
+
+#### 5. Stir the liquid at the specified rpm
 GET /stirLiquid/rmp
+
  
 
 ### MQTT

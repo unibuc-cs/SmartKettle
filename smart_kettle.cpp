@@ -223,7 +223,7 @@ namespace Generic {
         string message = "Preparing your tea...The temperature has been set to " +
                          teaInformation.getTempInfo().getTemperature() + " " +
                          teaInformation.getTempInfo().getScale() + " degrees. Infusion time: " +
-                         to_string(int(teaInformation.getTime() / 60)) + " minutes. " +
+                         to_string(teaInformation.getTime()) + " minutes. " +
                          warmMessage;
 
 
@@ -416,7 +416,7 @@ int main(int argc, char *argv[]) {
 
     }
 
-    // Code that waits for the shutdown singal for the server
+    // Code that waits for the shutdown signal for the server
     int signal = 0;
     int status = sigwait(&signals, &signal);
     if (status == 0) {

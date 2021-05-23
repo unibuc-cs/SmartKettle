@@ -22,7 +22,7 @@ sudo apt install libpistache-dev
 ### Compile and run
 
 ```bash
-g++ smart_kettle.cpp -o main -lpistache -Lmosquitto -lcrypto -lssl -lpthread  -std=c++17
+g++ smart_kettle.cpp -o main -lpistache -lmosquitto -lcrypto -lssl -lpthread  -std=c++17
 
 ./main
 ```

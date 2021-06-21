@@ -10,5 +10,21 @@
     {
         "scale": "C",
         "temperature": "100"
+    },
+    {
+        "scale": "scale",
+        "temperature": "temperature"
+    },
+    {
+        "scale": "scale",
+        "temperature": "temperature"
+    },
+    {
+        "scale": "scale",
+        "temperature": "temperature"
+    },
+    {
+        "scale": "scale",
+        "temperature": "temperature"
     }
 ]

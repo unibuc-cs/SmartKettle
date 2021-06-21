@@ -1,0 +1,160 @@
+openapi: 3.0.0
+info: 
+  title: SmartKettle
+  description: One app of the IoT-dataset
+  contact: 
+    name: Rareș Cristea
+    url: http://github.com/raresito
+  version: 1.0.0
+servers: 
+  - url: http://141.85.232.40:9080
+paths:
+  /warmLiquid/{temperature}/{scale}:
+    description: Warm the liquid at the specified temperature
+    get:
+      description: What temperature to warm the liquid at
+      parameters:
+      - in: path
+        name: temperature
+        required: true
+        schema:
+          type: number
+          example: 50
+      - in: path
+        name: scale
+        required: true
+        schema:
+          type: string
+          example: celsius
+      responses:
+        200:
+          description: Success Response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Kettle settings saved. The water is warming at temperature degrees scale
+                  timestamp: 
+                    type: string
+                    example: Mon Jun 21 17:12:02 2021
+  /boilLiquidByViscosity:
+    description: Boils the liquid to a temperature detemined by the viscosity of the liquid
+    get:
+      responses:
+        200:
+          description: Success Response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: The temperature has been set to 90 degrees
+                  timestamp: 
+                    type: string
+                    example: Mon Jun 21 17:12:02 2021
+  /makeTea:
+    description: Start the preparation of Tea
+    post:
+      requestBody:
+        description: Tea format
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                    keepWarm:
+                      type: boolean
+                    temperature:
+                      type: object
+                      properties:
+                        temperature:
+                          type: number
+                          example: 100
+                        scale:
+                          type: string
+                          example: C
+                    time:
+                      type: integer
+                      example: 5
+      responses:
+        200:
+          description: Success Response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Preparing your tea...The temperature has been set to 100 C degrees. Infusion time 5 minutes.
+                  timestamp: 
+                    type: string
+                    example: Mon Jun 21 17:12:02 2021
+  /warmLiquidByDate:
+    description: Schedule the preparation of Tea
+    post:
+      requestBody:
+          description: Tea format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                      recurrent:
+                        type: boolean
+                      temperature:
+                        type: object
+                        properties:
+                          temperature:
+                            type: number
+                            example: 100
+                          scale:
+                            type: string
+                            example: C
+                      hour:
+                        type: string
+                        example: "22:30"
+      responses:
+        200:
+          description: Success Response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Scheduler is set at 22:30. Temperature 50 degrees F.
+                  timestamp: 
+                    type: string
+                    example: Mon Jun 21 17:12:02 2021
+  /stirLiquid/{rpm}:
+    description: StirLiquid at a given speed
+    get:
+      parameters:
+        - in: path
+          name: rpm
+          required: true
+          schema:
+            type: number
+            example: 50
+      responses:
+        200:
+          description: Success Response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Started stirring the content of the kettle at 50 rmp
+                  timestamp: 
+                    type: string
+                    example: Mon Jun 21 17:12:02 2021
+              

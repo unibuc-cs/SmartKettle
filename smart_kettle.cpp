@@ -363,12 +363,15 @@ int main(int argc, char *argv[]) {
     stats.init(thr);
     stats.start();
 
-
     struct mosquitto *mosq;
 
     int pid = fork();
 
     if (pid == 0) {
+
+        /*
+        BUG: bucata asta de cod face server-ul HTTP sa nu mai
+        raspunda la request-uri, n-am investigat de ce inca
 
         mosquitto_lib_init();
 
@@ -412,8 +415,7 @@ int main(int argc, char *argv[]) {
         message = data.dump();
 
         mosquitto_publish(mosq, NULL, "kettle/viscosity", message.size(), message.c_str(), 0, true);
-
-
+        */
     }
 
     // Code that waits for the shutdown signal for the server

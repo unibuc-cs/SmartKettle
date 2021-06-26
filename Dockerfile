@@ -15,7 +15,9 @@ RUN g++ smart_kettle.cpp -o main -lpistache -lmosquitto -lcrypto -lssl -lpthread
 RUN chmod 755 ./main
 
 # Run
+COPY ./delay.sh /delay.sh
+RUN chmod 755 /delay.sh
 EXPOSE 9080
 RUN useradd -m dorel
 USER dorel
-CMD ["./main"]
+CMD ["/delay.sh", "1", "./main"]

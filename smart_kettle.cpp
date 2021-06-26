@@ -376,11 +376,11 @@ int main(int argc, char *argv[]) {
             mosq = mosquitto_new("publisher", true, NULL);
 
             // connect to port 1883
-            int rc = mosquitto_connect(mosq, "localhost", 1883, 60);
+            int rc = mosquitto_connect(mosq, "mqtt_server", 1883, 60);
 
             if (rc != 0) {
                 mosquitto_destroy(mosq);
-                throw string("Could not connect to server");
+                throw string("Could not connect to server") + to_string(rc);
             }
 
 

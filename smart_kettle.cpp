@@ -368,54 +368,54 @@ int main(int argc, char *argv[]) {
     int pid = fork();
 
     if (pid == 0) {
+        try {
+            mosquitto_lib_init();
 
-        /*
-        BUG: bucata asta de cod face server-ul HTTP sa nu mai
-        raspunda la request-uri, n-am investigat de ce inca
+            // create a new client as publisher
 
-        mosquitto_lib_init();
+            mosq = mosquitto_new("publisher", true, NULL);
 
-        // create a new client as publisher
+            // connect to port 1883
+            int rc = mosquitto_connect(mosq, "localhost", 1883, 60);
 
-        mosq = mosquitto_new("publisher", true, NULL);
+            if (rc != 0) {
+                mosquitto_destroy(mosq);
+                throw string("Could not connect to server");
+            }
 
-        // connect to port 1883
-        int rc = mosquitto_connect(mosq, "localhost", 1883, 60);
 
-        if (rc != 0) {
-            mosquitto_destroy(mosq);
-            return -1;
+            string message;
+            message = " Warming your tea at 70 degrees C";
+
+            mosquitto_publish(mosq, NULL, "kettle/temp/70/C", message.size(), message.c_str(), 0, false);
+
+
+
+
+            // get scheduler settings
+
+            message = Utils::readJson(SCHEDULER_INFO_PATH).dump();
+            mosquitto_publish(mosq, NULL, "kettle/scheduler", message.size(), message.c_str(), 0, true);
+
+
+
+
+            // interact with the viscosity sensor and retrieve data about the containing liquid
+
+            auto viscosity_data = Utils::readJson(VISCOSITY_INFO_PATH).get<vector<ViscosityInfo>>();
+            int viscosity = Utils::computeViscosity();
+            json data = {
+                    {"viscosity",        to_string(viscosity)},
+                    {"rec. temperature", Utils::findViscosityTemperature(viscosity_data, viscosity)}
+            };
+            message = data.dump();
+
+            mosquitto_publish(mosq, NULL, "kettle/viscosity", message.size(), message.c_str(), 0, true);
+        } catch (string err) {
+            cerr << "[MQTT] " << err << endl;
+        } catch (...) {
+            cerr << "[MQTT] Some unknown exception was thrown" << endl;
         }
-
-
-        string message;
-        message = " Warming your tea at 70 degrees C";
-
-        mosquitto_publish(mosq, NULL, "kettle/temp/70/C", message.size(), message.c_str(), 0, false);
-
-
-
-
-        // get scheduler settings
-
-        message = Utils::readJson(SCHEDULER_INFO_PATH).dump();
-        mosquitto_publish(mosq, NULL, "kettle/scheduler", message.size(), message.c_str(), 0, true);
-
-
-
-
-        // interact with the viscosity sensor and retrieve data about the containing liquid
-
-        auto viscosity_data = Utils::readJson(VISCOSITY_INFO_PATH).get<vector<ViscosityInfo>>();
-        int viscosity = Utils::computeViscosity();
-        json data = {
-                {"viscosity",        to_string(viscosity)},
-                {"rec. temperature", Utils::findViscosityTemperature(viscosity_data, viscosity)}
-        };
-        message = data.dump();
-
-        mosquitto_publish(mosq, NULL, "kettle/viscosity", message.size(), message.c_str(), 0, true);
-        */
     }
 
     // Code that waits for the shutdown signal for the server

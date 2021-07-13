@@ -4,9 +4,10 @@ FROM ubuntu:latest
 RUN apt update -y && apt upgrade -y
 RUN apt install -y software-properties-common g++ libboost-dev nlohmann-json3-dev libmosquitto-dev 
 RUN add-apt-repository ppa:pistache+team/unstable && apt update -y && apt install -y libpistache-dev
+RUN apt update -y && apt install -y mosquitto mosquitto-clients
 
 # Debugging
-RUN apt install -y curl wget nmap
+RUN apt install -y curl wget nmap vim
 
 # Compile
 COPY . /app
@@ -18,6 +19,6 @@ RUN chmod 755 ./main
 COPY ./delay.sh /delay.sh
 RUN chmod 755 /delay.sh
 EXPOSE 9080
-RUN useradd -m dorel
-USER dorel
+RUN useradd -m mock_user
+USER mock_user
 CMD ["/delay.sh", "1", "./main"]

@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info: 
   title: SmartKettle
-  description: One app of the IoT-dataset
+  description: App that controls an smart electric kettle. Part of the IoT-dataset for fuzzing Smart Home Appliances.
   contact: 
     name: Rareș Cristea
     url: http://github.com/raresito
@@ -10,9 +10,8 @@ servers:
   - url: http://141.85.232.40:9080
 paths:
   /warmLiquid/{temperature}/{scale}:
-    description: Warm the liquid at the specified temperature
     get:
-      description: What temperature to warm the liquid at
+      description: Warm the liquid at the specified temperature on the specified scale
       parameters:
       - in: path
         name: temperature
@@ -36,13 +35,13 @@ paths:
                 properties:
                   message: 
                     type: string
-                    example: Kettle settings saved. The water is warming at temperature degrees scale
+                    example: Kettle settings saved. The water is warming at 50 degrees celsius
                   timestamp: 
                     type: string
                     example: Mon Jun 21 17:12:02 2021
   /boilLiquidByViscosity:
-    description: Boils the liquid to a temperature detemined by the viscosity of the liquid
     get:
+      description: Boils the liquid to a temperature determined by the viscosity of the liquid.
       responses:
         200:
           description: Success Response
@@ -57,11 +56,35 @@ paths:
                   timestamp: 
                     type: string
                     example: Mon Jun 21 17:12:02 2021
+  /stirLiquid/{rpm}:
+    get:
+      description: Stir the liquid at a given speed.
+      parameters:
+        - in: path
+          name: rpm
+          required: true
+          schema:
+            type: number
+            example: 50
+      responses:
+        200:
+          description: Success Response
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Started stirring the content of the kettle at 50 rmp
+                  timestamp: 
+                    type: string
+                    example: Mon Jun 21 17:12:02 2021
   /makeTea:
-    description: Start the preparation of Tea
+    description: Start making tea
     post:
       requestBody:
-        description: Tea format
+        description: Making tea format
         content:
           application/json:
             schema:
@@ -69,6 +92,7 @@ paths:
               properties:
                     keepWarm:
                       type: boolean
+                      example: false
                     temperature:
                       type: object
                       properties:
@@ -96,10 +120,10 @@ paths:
                     type: string
                     example: Mon Jun 21 17:12:02 2021
   /warmLiquidByDate:
-    description: Schedule the preparation of Tea
+    description: Set a recurring event to prepare a drink at a certain hour.
     post:
       requestBody:
-          description: Tea format
+          description: Recurring event format
           content:
             application/json:
               schema:
@@ -107,6 +131,7 @@ paths:
                 properties:
                       recurrent:
                         type: boolean
+                        example: false
                       temperature:
                         type: object
                         properties:
@@ -130,30 +155,6 @@ paths:
                   message: 
                     type: string
                     example: Scheduler is set at 22:30. Temperature 50 degrees F.
-                  timestamp: 
-                    type: string
-                    example: Mon Jun 21 17:12:02 2021
-  /stirLiquid/{rpm}:
-    description: StirLiquid at a given speed
-    get:
-      parameters:
-        - in: path
-          name: rpm
-          required: true
-          schema:
-            type: number
-            example: 50
-      responses:
-        200:
-          description: Success Response
-          content: 
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message: 
-                    type: string
-                    example: Started stirring the content of the kettle at 50 rmp
                   timestamp: 
                     type: string
                     example: Mon Jun 21 17:12:02 2021
